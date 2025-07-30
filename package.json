@@ -1,16 +1,37 @@
 {
-  "name": "forkify",
+  "name": "recipes",
   "version": "1.0.0",
-  "description": "recipre application",
-  "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build index.html"
+  "description": "recipes app",
+  "keywords": [],
+  "homepage": "https://github.com/s1rHeadly/forkify#readme",
+  "bugs": {
+    "url": "https://github.com/s1rHeadly/forkify/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/s1rHeadly/forkify.git"
   },
   "license": "ISC",
-  "author": "",
+  "author": "dmchale",
+  "scripts": {
+    "start": "npm run build && concurrently \"npm run watch:scss\" \"npm run serve\"",
+    "build": "rimraf dist && npm run build:scss && npm run copy:files",
+    "lint": "npm run lint:js && npm run lint:scss",
+    "watch:scss": "sass --watch src/scss/main.scss:dist/css/styles.css",
+    "serve": "live-server dist",
+    "build:scss": "sass src/scss/main.scss:dist/css/styles.css",
+    "copy:files": "cp src/index.html dist/index.html && cp -R src/js dist/js && cp -R src/assets dist/assets",
+    "lint:js": "eslint src/js --ext .js",
+    "lint:scss": "stylelint \"src/scss/**/*.scss\""
+  },
   "devDependencies": {
-    "@parcel/transformer-sass": "^2.15.4",
-    "parcel": "^2.9.3",
-    "sass": "^1.26.10"
+    "concurrently": "^9.2.0",
+    "eslint": "^9.32.0",
+    "live-server": "^1.2.2",
+    "rimraf": "^6.0.1",
+    "sass": "^1.89.2",
+    "stylelint": "^16.23.0",
+    "stylelint-config-standard-scss": "^15.0.1",
+    "stylelint-scss": "^6.12.1"
   }
 }
