@@ -17,16 +17,16 @@
     "start": "npm run build && concurrently \"npm run watch:scss\" \"npm run watch:files\" \"npm run serve\"",
     "build": "rm -rf dist && npm run build:scss && npm run copy:files",
     "watch:scss": "sass --watch src/scss/main.scss:dist/css/styles.css",
-    "watch:files": "chokidar \"src/**/*.{js,html}\" -c \"npm run copy:files\"",
+    "watch:files": "nodemon --watch src --ext js,html --exec \"npm run copy:files\"",
     "serve": "live-server dist",
     "build:scss": "sass src/scss/main.scss:dist/css/styles.css",
     "copy:files": "cp src/index.html dist/index.html && cp -R src/js dist/js && cp -R src/assets dist/assets"
   },
   "devDependencies": {
-    "chokidar-cli": "^3.0.0",
     "concurrently": "^9.2.0",
     "eslint": "^9.32.0",
     "live-server": "^1.2.2",
+    "nodemon": "^3.0.3",
     "sass": "^1.89.2",
     "stylelint": "^16.23.0",
     "stylelint-config-standard-scss": "^15.0.1",
