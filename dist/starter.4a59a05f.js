@@ -130,7 +130,7 @@
 
   // Only insert newRequire.load when it is actually used.
   // The code in this file is linted against ES5, so dynamic import is not allowed.
-  // INSERT_LOAD_HERE
+  function $parcel$resolve(url) {  url = importMap[url] || url;  return import.meta.resolve(distDir + url);}newRequire.resolve = $parcel$resolve;
 
   Object.defineProperty(newRequire, 'root', {
     get: function () {
@@ -667,6 +667,7 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"7dWZ8":[function(require,module,exports,__globalThis) {
+var _renderRecipeJs = require("./utils/renderRecipe.js");
 const recipeContainer = document.querySelector('.recipe');
 const timeout = function(s) {
     return new Promise(function(_, reject) {
@@ -678,10 +679,13 @@ const timeout = function(s) {
 const showRecipe = async ()=>{
     try {
         const response = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886`);
-        if (!response.ok) throw new Error(`${data.message} ${response.status}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const { data } = await response.json();
-        // descructure the data.recipe
-        const { id, title, publisher, image_url: imageUrl, source_url: sourceUrl, ingredients, servings } = data.recipe;
+        console.log({
+            data
+        });
+        // destructure the data.recipe
+        const { id, title, publisher, image_url: imageUrl, source_url: sourceUrl, cooking_time: cookingTime, ingredients, servings } = data.recipe;
         // create a new recipe object from the data above
         const recipe = {
             id,
@@ -689,16 +693,156 @@ const showRecipe = async ()=>{
             publisher,
             imageUrl,
             sourceUrl,
+            cookingTime,
             ingredients,
             servings
         };
-    // console.log({ recipe });
+        const html = (0, _renderRecipeJs.renderRecipeHTML)(recipe);
+        recipeContainer.innerHTML = '';
+        recipeContainer.insertAdjacentHTML('afterbegin', html); // Uncomment when you want to render
     } catch (error) {
-        console.error('Error fetching recipe:', err.message);
+        console.error('Error fetching recipe:', error.message);
     }
-}; // evoke to test only
- // showRecipe()
+};
+// evoke to test only
+showRecipe();
 
-},{}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {})
+},{"./utils/renderRecipe.js":"hyJ6F"}],"hyJ6F":[function(require,module,exports,__globalThis) {
+// Icons are referenced directly in the HTML using href attributes
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "renderRecipeHTML", ()=>renderRecipeHTML);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+console.log((0, _iconsSvgDefault.default));
+function renderRecipeHTML(recipe) {
+    const { id = 'no id', title = 'no title', publisher = 'no publisher', imageUrl = '', sourceUrl = '', cookingTime = '', ingredients = [], servings = 0 } = recipe || {};
+    return `
+  
+  <figure class="recipe__fig" data-recipeI="${id}">
+  <img src="${imageUrl}" alt="Tomato" class="recipe__img" />
+  <h1 class="recipe__title">
+    <span>${title}</span>
+  </h1>
+</figure>
+
+<div class="recipe__details">
+  <div class="recipe__info">
+    <svg class="recipe__info-icon">
+      <use href="${0, _iconsSvgDefault.default}#icon-clock"></use>
+    </svg>
+    <span class="recipe__info-data recipe__info-data--minutes">${cookingTime}</span>
+    <span class="recipe__info-text">minutes</span>
+  </div>
+  <div class="recipe__info">
+    <svg class="recipe__info-icon">
+      <use href="${0, _iconsSvgDefault.default}#icon-users"></use>
+    </svg>
+    <span class="recipe__info-data recipe__info-data--people">${servings}</span>
+    <span class="recipe__info-text">${servings.length < 2 ? 'serving' : 'servings'}</span>
+
+    <div class="recipe__info-buttons">
+      <button class="btn--tiny btn--increase-servings">
+        <svg>
+          <use href="${0, _iconsSvgDefault.default}#icon-minus-circle"></use>
+        </svg>
+      </button>
+      <button class="btn--tiny btn--increase-servings">
+        <svg>
+          <use href="${0, _iconsSvgDefault.default}#icon-plus-circle"></use>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="recipe__user-generated">
+    <svg>
+      <use href="${0, _iconsSvgDefault.default}#icon-user"></use>
+    </svg>
+  </div>
+  <button class="btn--round">
+    <svg class="">
+      <use href="${0, _iconsSvgDefault.default}#icon-bookmark-fill"></use>
+    </svg>
+  </button>
+</div>
+
+<div class="recipe__ingredients">
+  <h2 class="heading--2">Recipe ingredients</h2>
+  <ul class="recipe__ingredient-list">
+   ${ingredients.length ? ingredients.map((ing)=>{
+        const { quantity, unit, description } = ing;
+        return `
+                  <li class="recipe__ingredient">
+                      <svg class="recipe__icon">
+      <use href="${0, _iconsSvgDefault.default}#icon-check"></use>
+    </svg>
+                  <div class="recipe__quantity">${quantity !== null ? quantity : ''}</div>
+                  <div class="recipe__description">
+                    <span class="recipe__unit">${unit}</span>
+                  ${description}
+                  </div>
+                </li>
+                 `;
+    }).join('') : ''}
+  </ul>
+</div>
+
+<div class="recipe__directions">
+  <h2 class="heading--2">How to cook it</h2>
+  <p class="recipe__directions-text">
+    This recipe was carefully designed and tested by
+    <span class="recipe__publisher">The Pioneer Woman</span>. Please check out
+    directions at their website.
+  </p>
+  <a
+    class="btn--small recipe__btn"
+    href="${sourceUrl}"
+    target="_blank"
+  >
+    <span>Directions</span>
+    <svg class="search__icon">
+      <use href="#icon-arrow-right"></use>
+    </svg>
+  </a>
+</div>
+
+`;
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","url:../../img/icons.svg":"fd0vu"}],"jnFvT":[function(require,module,exports,__globalThis) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"fd0vu":[function(require,module,exports,__globalThis) {
+module.exports = module.bundle.resolve("icons.0809ef97.svg") + "?" + Date.now();
+
+},{}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
 
 //# sourceMappingURL=starter.4a59a05f.js.map

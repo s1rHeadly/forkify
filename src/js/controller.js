@@ -1,3 +1,5 @@
+import { renderRecipeHTML } from './utils/renderRecipe.js';
+
 const recipeContainer = document.querySelector('.recipe');
 
 const timeout = function (s) {
@@ -15,18 +17,21 @@ const showRecipe = async () => {
     );
 
     if (!response.ok) {
-      throw new Error(`${data.message} ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const { data } = await response.json();
 
-    // descructure the data.recipe
+    console.log({ data });
+
+    // destructure the data.recipe
     const {
       id,
       title,
       publisher,
       image_url: imageUrl,
       source_url: sourceUrl,
+      cooking_time: cookingTime,
       ingredients,
       servings,
     } = data.recipe;
@@ -38,14 +43,17 @@ const showRecipe = async () => {
       publisher,
       imageUrl,
       sourceUrl,
+      cookingTime,
       ingredients,
       servings,
     };
-    // console.log({ recipe });
+    const html = renderRecipeHTML(recipe);
+    recipeContainer.innerHTML = '';
+    recipeContainer.insertAdjacentHTML('afterbegin', html); // Uncomment when you want to render
   } catch (error) {
-    console.error('Error fetching recipe:', err.message);
+    console.error('Error fetching recipe:', error.message);
   }
 };
 
 // evoke to test only
-// showRecipe()
+showRecipe();
