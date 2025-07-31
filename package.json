@@ -16,13 +16,16 @@
   "scripts": {
     "serve": "live-server src --no-css-inject --no-browser",
     "build:scss": "sass src/scss/main.scss:src/css/styles.css",
-    "watch:scss": "sass --watch src/scss/main.scss:src/css/styles.css"
+    "watch:scss": "sass --watch src/scss/main.scss:src/css/styles.css",
+    "format": "prettier --write \"src/**/*.{js,html,css,scss}\"",
+    "format:check": "prettier --check \"src/**/*.{js,html,css,scss}\""
   },
   "devDependencies": {
     "concurrently": "^9.2.0",
     "eslint": "^9.32.0",
     "live-server": "^1.2.2",
     "nodemon": "^3.0.3",
+    "prettier": "^3.6.2",
     "sass": "^1.89.2",
     "stylelint": "^16.23.0",
     "stylelint-config-standard-scss": "^15.0.1",

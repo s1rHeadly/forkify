@@ -1,15 +1,29 @@
 (function () {
-  "use strict";
+  'use strict';
 
   // info
   const APIKEY = `a3b4e59d-0fd5-4a80-a2e3-38da6aca72c4`;
-  const BASE_URL = "https://forkify-api.herokuapp.com/api/v2/recipes";
+  const BASE_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes';
 
   // vars
-  const recipeContainer = document.querySelector(".recipe");
+  const recipeContainer = document.querySelector('.recipe');
 
   // functions
-  function getRecipeSearch(query = "") {
+
+  //renderSpinner function
+  function renderSpinner(parentElement) {
+    const markup = `
+        <div class="spinner">
+          <svg>
+            <use href="assets/img/icons.svg#icon-loader"></use>
+          </svg>
+        </div>`;
+
+    parentElement.innerHTML = '';
+    parentElement.insertAdjacentHTML('afterbegin', markup);
+  }
+
+  function getRecipeSearch(query = '') {
     return `${BASE_URL}?search=${query}&key=${APIKEY}`;
   }
 
@@ -23,7 +37,9 @@
     recipeById: getRecipeID,
   };
 
-  const showRecipebyId = async (id) => {
+  // Main Recipe Fetch Request
+  async function showRecipebyId(id) {
+    renderSpinner(recipeContainer);
     try {
       const response = await fetch(endPoints.recipeById(id));
       if (!response.ok) {
@@ -33,21 +49,21 @@
       const { data } = await response.json();
 
       if (!data) {
-        console.warn("No data found for this recipe ID.");
+        console.warn('No data found for this recipe ID.');
         return;
       }
 
       let { recipe } = data;
 
       recipe = {
-        id: recipe.id ?? "no-id",
-        title: recipe.title ?? "No title",
+        id: recipe.id ?? 'no-id',
+        title: recipe.title ?? 'No title',
         cookingTime: recipe.cooking_time ?? 0,
-        imageUrl: recipe.image_url ?? "",
+        imageUrl: recipe.image_url ?? '',
         ingredients: recipe.ingredients ?? [],
-        publisher: recipe.publisher ?? "Unknown",
+        publisher: recipe.publisher ?? 'Unknown',
         servings: recipe.servings ?? 0,
-        sourceUrl: recipe.source_url ?? "",
+        sourceUrl: recipe.source_url ?? '',
       };
 
       console.log({ recipe });
@@ -66,14 +82,18 @@
                  <svg class="recipe__info-icon">
            <use href="assets/img/icons.svg#icon-clock"></use>
          </svg>
-        <span class="recipe__info-data recipe__info-data--minutes">${recipe.cookingTime}</span>
+        <span class="recipe__info-data recipe__info-data--minutes">${
+          recipe.cookingTime
+        }</span>
         <span class="recipe__info-text">minutes</span>
       </div>
       <div class="recipe__info">
                  <svg class="recipe__info-icon">
-           <use href="assets/img/icons.svg#icon-users"></use>
-         </svg>
-        <span class="recipe__info-data recipe__info-data--people">${recipe.servings}</span>
+                 <use href="assets/img/icons.svg#icon-users"></use>
+                </svg>
+        <span class="recipe__info-data recipe__info-data--people">${
+          recipe.servings
+        }</span>
         <span class="recipe__info-text">servings</span>
 
         <div class="recipe__info-buttons">
@@ -105,27 +125,24 @@
     <div class="recipe__ingredients">
       <h2 class="heading--2">Recipe ingredients</h2>
       <ul class="recipe__ingredient-list">
-                 <li class="recipe__ingredient">
-           <svg class="recipe__icon">
-             <use href="assets/img/icons.svg#icon-check"></use>
-           </svg>
-           <div class="recipe__quantity">1000</div>
-           <div class="recipe__description">
-             <span class="recipe__unit">g</span>
-             pasta
-           </div>
-         </li>
-
-         <li class="recipe__ingredient">
-           <svg class="recipe__icon">
-             <use href="assets/img/icons.svg#icon-check"></use>
-           </svg>
-          <div class="recipe__quantity">0.5</div>
-          <div class="recipe__description">
-            <span class="recipe__unit">cup</span>
-            ricotta cheese
-          </div>
-        </li>
+      ${
+        recipe.ingredients.length
+          ? recipe.ingredients
+              .map(({ quantity, unit, description }) => {
+                return `<li class="recipe__ingredient">
+                  <svg class="recipe__icon">
+                    <use href="assets/img/icons.svg#icon-check"></use>
+                  </svg>
+                  <div class="recipe__quantity">${quantity ?? ''}</div>
+                  <div class="recipe__description">
+                    <span class="recipe__unit">${unit ?? ''}</span>
+                    ${description}
+                  </div>
+                </li>`;
+              })
+              .join('')
+          : ''
+      }
       </ul>
     </div>
 
@@ -133,7 +150,9 @@
       <h2 class="heading--2">How to cook it</h2>
       <p class="recipe__directions-text">
         This recipe was carefully designed and tested by
-        <span class="recipe__publisher">${recipe.publisher}</span>. Please check out
+        <span class="recipe__publisher">${
+          recipe.publisher
+        }</span>. Please check out
         directions at their website.
       </p>
       <a
@@ -148,14 +167,25 @@
       </a>
     </div>`;
 
-      recipeContainer.innerHTML = "";
-      recipeContainer.insertAdjacentHTML("afterbegin", markup);
+      //clear the container
+      recipeContainer.innerHTML = '';
+      //add the content to the container
+      recipeContainer.insertAdjacentHTML('afterbegin', markup);
 
-      console.log("test", { recipe });
     } catch (error) {
-      console.error("Error fetching recipe:", error);
+      console.error('Error fetching recipe:', error);
+    } finally {
+      const spinner = recipeContainer.querySelector('.spinner');
+      if (spinner) {
+        spinner.remove();
     }
-  };
+  }
 
-  showRecipebyId(`5ed6604591c37cdc054bc886`);
+  //initalise app
+  function init() {
+    showRecipebyId(`5ed6604591c37cdc054bc886`);
+  }
+
+  //call the main app function
+  window.addEventListener('DOMContentLoaded', init);
 })();
