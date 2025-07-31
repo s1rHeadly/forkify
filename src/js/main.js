@@ -171,13 +171,13 @@
       recipeContainer.innerHTML = '';
       //add the content to the container
       recipeContainer.insertAdjacentHTML('afterbegin', markup);
-
     } catch (error) {
       console.error('Error fetching recipe:', error);
     } finally {
       const spinner = recipeContainer.querySelector('.spinner');
       if (spinner) {
         spinner.remove();
+      }
     }
   }
 
