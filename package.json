@@ -14,13 +14,9 @@
   "license": "ISC",
   "author": "dmchale",
   "scripts": {
-    "start": "npm run build && concurrently \"npm run watch:scss\" \"npm run watch:files\" \"npm run serve\"",
-    "build": "rm -rf dist && npm run build:scss && npm run copy:files",
-    "watch:scss": "sass --watch src/scss/main.scss:dist/css/styles.css",
-    "watch:files": "nodemon --watch src --ext js,html --exec \"npm run copy:files\"",
-    "serve": "live-server dist",
-    "build:scss": "sass src/scss/main.scss:dist/css/styles.css",
-    "copy:files": "cp src/index.html dist/index.html && cp -R src/js dist/js && cp -R src/assets dist/assets"
+    "serve": "live-server src --no-css-inject --no-browser",
+    "build:scss": "sass src/scss/main.scss:src/css/styles.css",
+    "watch:scss": "sass --watch src/scss/main.scss:src/css/styles.css"
   },
   "devDependencies": {
     "concurrently": "^9.2.0",
